@@ -21,23 +21,29 @@ public class ModMenuIntegration implements ModMenuApi {
 
             ConfigBuilder builder = ConfigBuilder.create()
                     .setParentScreen(parent)
-                    .setTitle(Text.literal("Xenority Tools - Einstellungen"));
+                    .setTitle(Text.literal("PteroConnect - Settings"));
 
             builder.setSavingRunnable(ConfigManager::saveConfig);
 
             ConfigCategory general = builder.getOrCreateCategory(Text.literal("API-Einstellungen"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
-            general.addEntry(entryBuilder.startStrField(Text.literal("API Endpunkt"), ConfigManager.CONFIG.API_ENDPOINT)
-                    .setDefaultValue("https://default.endpoint.com/api")
-                    .setTooltip(Text.literal("Die URL deiner API"))
+            general.addEntry(entryBuilder.startStrField(Text.literal("Pterodactyl API Entpoint"), ConfigManager.CONFIG.API_ENDPOINT)
+                    .setDefaultValue("https://panel.<your-domain>.com/")
+                    .setTooltip(Text.literal("Pterodactyl API Entpoint"))
                     .setSaveConsumer(newValue -> ConfigManager.CONFIG.API_ENDPOINT = newValue)
                     .build());
 
-            general.addEntry(entryBuilder.startStrField(Text.literal("API Key"), ConfigManager.CONFIG.API_KEY)
-                    .setDefaultValue("DEIN_DEFAULT_API_KEY")
-                    .setTooltip(Text.literal("Dein geheimer API-Schlüssel"))
+            general.addEntry(entryBuilder.startStrField(Text.literal("Pterodactyl Client API Key"), ConfigManager.CONFIG.API_KEY)
+                    .setDefaultValue("ptlc_")
+                    .setTooltip(Text.literal("Pterodactyl Client API Key"))
                     .setSaveConsumer(newValue -> ConfigManager.CONFIG.API_KEY = newValue)
+                    .build());
+
+            general.addEntry(entryBuilder.startStrField(Text.literal("Pterodactyl Node Endpoint"), ConfigManager.CONFIG.NODE_ENDPOINT)
+                    .setDefaultValue("https://node.<your-domain>.com")
+                    .setTooltip(Text.literal("Pterodactyl Node Endpoint"))
+                    .setSaveConsumer(newValue -> ConfigManager.CONFIG.NODE_ENDPOINT = newValue)
                     .build());
 
             return builder.build();

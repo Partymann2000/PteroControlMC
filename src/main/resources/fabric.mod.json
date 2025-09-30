@@ -1,18 +1,18 @@
 {
 	"schemaVersion": 1,
-	"id": "xenority-tools",
+	"id": "pterocontrol",
 	"version": "${version}",
-	"name": "Xenority Tools",
-	"description": "My first litle Mod",
+	"name": "PteroControl",
+	"description": "Control your Pterodactyl game servers directly from Minecraft's multiplayer screen.",
 	"authors": [
 		"Partymann20000"
 	],
 	"contact": {
-		"homepage": "https://partymann2000.de/",
+		"discord": "https://partymann2000.de/",
 		"sources": "https://github.com/Partymann2000"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/xenority-tools/icon.png",
+	"icon": "assets/pterocontrol/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -26,9 +26,9 @@
         ]
 	},
 	"mixins": [
-      "xenority-tools.json",
+      "pterocontrol.json",
 		{
-			"config": "xenority-tools.client.mixins.json",
+			"config": "pterocontrol.client.mixins.json",
 			"environment": "client"
 		}
 	],

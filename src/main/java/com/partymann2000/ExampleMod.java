@@ -7,13 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExampleMod implements ModInitializer {
-    public static final String MOD_ID = "xenority-tools";
+    public static final String MOD_ID = "pterocontrol";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override
     public void onInitialize() {
         // Diese Methode wird beim Start des Spiels aufgerufen
-        LOGGER.info("Initializing Xenority Tools!");
+        LOGGER.info("Initializing {}!", "PteroControl");
 
         // ### HIER WIRD DIE KONFIGURATION GELADEN ###
         ConfigManager.loadConfig();

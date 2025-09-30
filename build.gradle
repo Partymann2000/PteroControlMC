@@ -28,7 +28,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"xenority-tools" {
+		"pterocontrol" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

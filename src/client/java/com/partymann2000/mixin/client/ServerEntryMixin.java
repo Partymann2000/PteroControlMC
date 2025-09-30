@@ -2,6 +2,7 @@
 package com.partymann2000.mixin.client;
 
 import com.partymann2000.PterodactylApiHelper;
+import com.partymann2000.config.ConfigManager; // <-- WICHTIG: Import hinzufügen
 import com.partymann2000.interfaces.IApiStatusUpdater;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -37,7 +38,17 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(MultiplayerServerListWidget list, MultiplayerScreen screen, ServerInfo server, CallbackInfo ci) {
-        this.isXenorityServer = this.server.address.startsWith("node.xenority.com");
+        // ### HIER IST DIE ÄNDERUNG ###
+        // Wir holen den Wert aus der Konfiguration, anstatt ihn fest einzuprogrammieren.
+        String configuredNode = ConfigManager.CONFIG.NODE_ENDPOINT;
+
+        // Wir machen den Check robuster: Entferne "http://" oder "https://", falls der User es eingibt.
+        if (configuredNode != null && !configuredNode.isEmpty()) {
+            String cleanedNode = configuredNode.replace("https://", "").replace("http://", "");
+            this.isXenorityServer = this.server.address.startsWith(cleanedNode);
+        } else {
+            this.isXenorityServer = false;
+        }
 
         this.startButton = ButtonWidget.builder(Text.literal("Start"), (b) -> PterodactylApiHelper.sendPowerSignal("start", this.serverId, this, this.server)).size(20, 20).build();
         this.restartButton = ButtonWidget.builder(Text.literal("Restart"), (b) -> PterodactylApiHelper.sendPowerSignal("restart", this.serverId, this, this.server)).size(20, 20).build();
@@ -52,8 +63,6 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
     public void xenority_updateApiStatus(Optional<PterodactylApiHelper.PteroServerInfo> infoOptional) {
         if (infoOptional.isEmpty()) {
             this.apiCheckComplete = false;
-            // Wenn der Status aktualisiert wird (nach einem Klick), wollen wir den Server als "nicht gefunden" markieren,
-            // damit die Buttons kurz ausgehen, bis die neue Info da ist.
             this.apiServerFound = false;
             return;
         }
@@ -76,30 +85,22 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
         this.restartButton.visible = true;
         this.stopButton.visible = true;
 
-        // ###############################################################
-        // ### FINALE LOGIK - BASIEREND AUF DEINEN DEBUG-DATEN ###
-        // ###############################################################
         if (!apiCheckComplete || !apiServerFound) {
-            // Regel 1: Server nicht in API gefunden oder Check läuft -> alles aus
             this.startButton.active = false;
             this.restartButton.active = false;
             this.stopButton.active = false;
         } else {
-            // Regel 2: Wir verwenden den offiziellen Status von Minecraft
             ServerInfo.Status status = this.server.getStatus();
 
             if (status == ServerInfo.Status.PINGING) {
-                // Regel 2a: Server wird angepingt -> alles aus
                 this.startButton.active = false;
                 this.restartButton.active = false;
                 this.stopButton.active = false;
             } else if (status == ServerInfo.Status.SUCCESSFUL) {
-                // Regel 2b: Server ist ONLINE -> Start aus, Rest an
                 this.startButton.active = false;
                 this.restartButton.active = true;
                 this.stopButton.active = true;
-            } else { // Status ist UNREACHABLE oder ein anderer inkompatibler Zustand
-                // Regel 2c: Server ist NICHT online -> Start an, Rest aus
+            } else {
                 this.startButton.active = true;
                 this.restartButton.active = false;
                 this.stopButton.active = false;

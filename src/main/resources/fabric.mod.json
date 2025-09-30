@@ -1,0 +1,45 @@
+{
+	"schemaVersion": 1,
+	"id": "xenority-tools",
+	"version": "${version}",
+	"name": "Xenority Tools",
+	"description": "My first litle Mod",
+	"authors": [
+		"Partymann20000"
+	],
+	"contact": {
+		"homepage": "https://partymann2000.de/",
+		"sources": "https://github.com/Partymann2000"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/xenority-tools/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.partymann2000.ExampleMod"
+		],
+		"client": [
+			"com.partymann2000.ExampleModClient"
+		],
+        "modmenu": [
+            "com.partymann2000.config.ModMenuIntegration"
+        ]
+	},
+	"mixins": [
+      "xenority-tools.json",
+		{
+			"config": "xenority-tools.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.17.2",
+		"minecraft": "~1.21.8",
+		"java": ">=21",
+		"fabric-api": "*",
+        "modmenu": ">=12.1.0"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

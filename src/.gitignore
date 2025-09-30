@@ -1,0 +1,25 @@
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Gradle
+.gradle/
+build/
+!build/libs/
+out/
+
+# Loom
+.cache/
+run/
+client/run/
+server/run/
+dev/run/
+
+# Log files
+*.log
+logs/
+
+# Secrets / User-specific
+local.properties

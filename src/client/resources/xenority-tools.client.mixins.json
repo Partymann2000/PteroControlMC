@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "com.partymann2000.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+    "client": [
+      "MultiplayerScreenMixin",
+      "ServerEntryMixin",
+      "ServerListWidgetAccessor"
+    ],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

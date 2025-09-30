@@ -1,37 +1,36 @@
-# Xenority Tools
+# PteroControl
+Your Pterodactyl panel, now inside Minecraft.
 
-![Lizenz](https://img.shields.io/badge/license-CC0--1.0-blue)
-[![Modrinth](https://img.shields.io/badge/dynamic/json?color=00AF5C&label=Modrinth&query=versions[0]&url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2FMOD_ID_HIER_EINSETZEN%2Fversion&logo=modrinth)](LINK_ZU_MODRINTH)
-[![CurseForge](https://img.shields.io/curseforge/v/PROJECT_ID_HIER_EINSETZEN?color=F16436&label=CurseForge&logo=curseforge)](LINK_ZU_CURSEFORGE)
+<p align="center">
+    <a href="https://fabricmc.net/"><img src="https://img.shields.io/badge/Requires-Fabric_API-blue?logo=fabric" alt="Requires Fabric API"></a>
+    <a href="LINK_ZU_MODRINTH_HIER_EINSETZEN"><img src="https://img.shields.io/modrinth/v/MOD_ID_HIER_EINSETZEN?color=00AF5C&label=Modrinth&logo=modrinth" alt="Modrinth"></a>
+    <a href="LINK_ZU_CURSEFORGE_HIER_EINSETZEN"><img src="https://img.shields.io/curseforge/v/PROJECT_ID_HIER_EINSETZEN?color=F16436&label=CurseForge&logo=curseforge" alt="CurseForge"></a>
+</p>
 
-Ein kleiner, aber mächtiger Client-Mod für Minecraft, der die Verwaltung deiner Pterodactyl-Gameserver direkt in die Multiplayer-Serverliste integriert.
+PteroControl is a powerful, client-side Minecraft mod that seamlessly integrates your Pterodactyl game server panel directly into the multiplayer screen. Manage your servers without ever leaving the game!
 
-![Screenshot der Serverliste mit den neuen Buttons](https://i.imgur.com/your-screenshot-url.png)
-*(Tipp: Mache einen Screenshot von deiner Mod im Spiel, lade ihn z.B. bei [Imgur](https://imgur.com/upload) hoch und ersetze den Link hier!)*
+![PteroControl Demo](media/MinecraftMultiplayerScreen.gif)
 
 ---
 
 ## ✨ Features
 
-* Fügt **Start**, **Restart** und **Stop** Buttons zu Servereinträgen in der Multiplayer-Liste hinzu.
-* **Intelligente Anzeige:** Die Buttons erscheinen nur bei Servern, die zu deiner konfigurierten Domain gehören (z.B. `node.xenority.com`).
-* **Dynamischer Status:** Die Buttons werden automatisch aktiviert oder deaktiviert, basierend auf dem Live-Status des Servers in Minecraft (Online, Offline, Pinging).
-    * Ist der Server offline, ist nur "Start" aktiv.
-    * Ist der Server online, sind "Restart" und "Stop" aktiv.
-    * Während der Server angepingt wird, sind alle Buttons deaktiviert.
-* **Vollständig konfigurierbar** über ein Einstellungsmenü im Spiel (erfordert Mod Menu).
+* **In-Game Controls:** Adds **Start**, **Stop**, and **Restart** buttons directly to your server entries in the multiplayer list.
+* **Smart Display:** Buttons only appear for servers matching your configured Pterodactyl node address.
+* **Dynamic Button States:** Buttons automatically enable or disable based on the server's live status (Online, Offline, or Pinging), preventing unwanted actions.
+* **Auto-Refresh:** The button states update automatically a few seconds after sending a command, reflecting the server's new state.
+* **Fully Configurable:** A comprehensive in-game settings screen allows you to configure your API endpoint, key, and node address (requires Mod Menu).
 
 ---
 
 ## 📥 Installation
 
-1.  Stelle sicher, dass du den [Fabric Loader](https://fabricmc.net/use/) installiert hast.
-2.  Lade die Mod von [Modrinth](LINK_ZU_MODRINTH) oder [CurseForge](LINK_ZU_CURSEFORGE) herunter.
-3.  Platziere die heruntergeladene `.jar`-Datei in deinem `mods`-Ordner.
+1.  Make sure you have the [Fabric Loader](https://fabricmc.net/use/) installed.
+2.  Download the latest release of PteroControl from the [Releases page](https://github.com/Partymann2000/PteroControlMC/releases). 3.  Place the downloaded `.jar` file in your `mods` folder.
 
-### Benötigte Abhängigkeiten (Dependencies)
+### Required Dependencies
 
-Damit dieser Mod funktioniert, müssen die folgenden Bibliotheken ebenfalls in deinem `mods`-Ordner sein:
+For PteroControl to work, you **must** also have the following mods installed:
 
 * [**Fabric API**](https://modrinth.com/mod/fabric-api)
 * [**Mod Menu**](https://modrinth.com/mod/modmenu)
@@ -39,40 +38,26 @@ Damit dieser Mod funktioniert, müssen die folgenden Bibliotheken ebenfalls in d
 
 ---
 
-## ⚙️ Konfiguration
+## ⚙️ Configuration
 
-Nach der Installation musst du die Mod konfigurieren, damit sie sich mit deinem Pterodactyl Panel verbinden kann.
-
-1.  Starte Minecraft.
-2.  Gehe im Hauptmenü auf `Mods`.
-3.  Suche in der Liste nach `Xenority Tools` und klicke auf das **Zahnrad-Icon** (⚙️).
-4.  Gib deine **Pterodactyl Panel URL** ein (z.B. `https://panel.xenority.com`).
-5.  Gib deinen **Client API Key** ein (muss im Account-Bereich deines Panels erstellt werden, beginnt meist mit `ptlc_`).
-6.  Speichere die Einstellungen.
-
-Die Buttons erscheinen nun automatisch bei den richtigen Servern in deiner Multiplayer-Liste!
+1.  Launch Minecraft and go to the **Mods** menu.
+2.  Find **PteroControl** in the list and click the **gear icon** (⚙️).
+3.  Enter your **Pterodactyl Panel URL** (e.g., `https://panel.yourdomain.com`).
+4.  Enter your **Client API Key** (starts with `ptlc_`).
+5.  Enter the **Node Address** of your servers (e.g., `node.yourdomain.com`).
+6.  Click **Save** and you're done!
 
 ---
 
-## 👨‍💻 Für Entwickler (Kompilieren)
+## 👨‍💻 Building from Source
 
-Wenn du das Projekt selbst kompilieren möchtest:
-
-1.  Klone das Repository:
-    ```bash
-    git clone [https://github.com/DEIN_USERNAME/DEIN_REPO_NAME.git](https://github.com/DEIN_USERNAME/DEIN_REPO_NAME.git)
-    ```
-2.  Navigiere in den Projektordner:
-    ```bash
-    cd DEIN_REPO_NAME
-    ```
-3.  Führe den Build-Befehl aus:
-    * Für Windows: `gradlew.bat build`
-    * Für Linux/macOS: `./gradlew build`
-4.  Die fertige `.jar`-Datei findest du im Ordner `build/libs`.
+1.  Clone the repository: `git clone https://github.com/Partymann2000/PteroControlMC.git`
+2.  Navigate into the directory: `cd PteroControlMC`
+3.  Build the JAR: `gradlew.bat build` (Windows) or `./gradlew build` (Linux/macOS).
+4.  The compiled `.jar` will be in `build/libs/`.
 
 ---
 
-## 📜 Lizenz
+## 📜 License
 
-Dieses Projekt steht unter der **[CC0-1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)** Lizenz. Das bedeutet, es ist Public Domain. Du kannst damit machen, was du möchtest – es kopieren, verändern, weiterverbreiten, ohne um Erlaubnis zu fragen.
+This project is licensed under the **[CC0-1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)** license.

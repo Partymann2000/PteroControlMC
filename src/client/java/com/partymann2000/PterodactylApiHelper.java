@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.partymann2000.config.ConfigManager;
 import com.partymann2000.interfaces.IApiStatusUpdater;
 import net.minecraft.client.network.ServerInfo;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -39,7 +40,6 @@ public class PterodactylApiHelper {
         }
         CompletableFuture.runAsync(() -> {
             try {
-                // Deaktiviere Buttons sofort, indem wir einen leeren Status senden
                 updater.xenority_updateApiStatus(Optional.empty());
                 postPowerSignal(serverId, signal);
                 Thread.sleep(3000);
@@ -52,13 +52,18 @@ public class PterodactylApiHelper {
     }
 
     private static Optional<PteroServerInfo> findServerInfoByPort(int port) throws Exception {
-        String url = ConfigManager.CONFIG.API_ENDPOINT + "/api/client";
+        String url = getCleanEndpoint() + "/api/client";
+        ExampleMod.LOGGER.info("Sende GET-Anfrage an: {}", url);
+
         HttpRequest request = buildBaseRequest(url).GET().build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
         if (response.statusCode() != 200) {
             ExampleMod.LOGGER.error("Fehler beim Abrufen der Serverliste: Status Code {}", response.statusCode());
-            return Optional.empty();
+            ExampleMod.LOGGER.error("Antwort vom Server: {}", response.body());
+            throw new RuntimeException("Fehler beim Abrufen der Serverliste");
         }
+
         PterodactylServerList serverList = GSON.fromJson(response.body(), PterodactylServerList.class);
         for (PterodactylServer server : serverList.data) {
             if (server.attributes != null && server.attributes.relationships != null && server.attributes.relationships.allocations != null && server.attributes.relationships.allocations.data != null) {
@@ -74,7 +79,7 @@ public class PterodactylApiHelper {
 
     private static void postPowerSignal(String serverId, String signal) throws Exception {
         String jsonPayload = GSON.toJson(new PowerSignal(signal));
-        String url = String.format("%s/api/client/servers/%s/power", ConfigManager.CONFIG.API_ENDPOINT, serverId);
+        String url = String.format("%s/api/client/servers/%s/power", getCleanEndpoint(), serverId);
         ExampleMod.LOGGER.info("Sende POST-Anfrage an: {}", url);
         HttpRequest request = buildBaseRequest(url).POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
@@ -82,6 +87,7 @@ public class PterodactylApiHelper {
             ExampleMod.LOGGER.info("Signal '{}' erfolgreich an Server {} gesendet!", signal.toUpperCase(), serverId);
         } else {
             ExampleMod.LOGGER.warn("Fehler beim Senden des Signals an Server {}: Status {}", serverId, response.statusCode());
+            ExampleMod.LOGGER.warn("Antwort vom Server: {}", response.body());
         }
     }
 
@@ -93,12 +99,21 @@ public class PterodactylApiHelper {
                 .header("Accept", "application/vnd.pterodactyl.v1+json");
     }
 
-    // --- HILFSKLASSEN VEREINFACHT ---
-    public record PteroServerInfo(String identifier) {} // Status entfernt
+    // ### NEUE HELFER-METHODE ###
+    // Diese Methode holt den Endpunkt und entfernt einen eventuellen "/" am Ende.
+    private static String getCleanEndpoint() {
+        String endpoint = ConfigManager.CONFIG.API_ENDPOINT;
+        if (endpoint != null && endpoint.endsWith("/")) {
+            return endpoint.substring(0, endpoint.length() - 1);
+        }
+        return endpoint;
+    }
+
+    public record PteroServerInfo(String identifier) {}
     record PowerSignal(String signal) {}
     record PterodactylServerList(List<PterodactylServer> data) {}
     record PterodactylServer(ServerAttributes attributes) {}
-    record ServerAttributes(String identifier, Relationships relationships) {} // Status entfernt
+    record ServerAttributes(String identifier, Relationships relationships) {}
     record Relationships(Allocations allocations) {}
     record Allocations(List<Allocation> data) {}
     record Allocation(AllocationAttributes attributes) {}

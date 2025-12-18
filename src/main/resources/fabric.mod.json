@@ -32,13 +32,13 @@
 			"environment": "client"
 		}
 	],
-	"depends": {
-		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.8",
-		"java": ">=21",
-		"fabric-api": ">=0.133.4+1.21.8",
-        "modmenu": ">=12.1.0"
-	},
+    "depends": {
+      "fabricloader": ">=0.18.1",
+      "minecraft": "~1.21.11",
+      "java": ">=21",
+      "fabric-api": ">=0.140.0+1.21.11",
+      "modmenu": ">=12.1.0"
+    },
 	"suggests": {
 		"another-mod": "*"
 	}

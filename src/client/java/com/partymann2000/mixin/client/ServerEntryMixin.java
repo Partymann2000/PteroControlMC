@@ -1,14 +1,15 @@
-// Pfad: src/client/java/com/partymann2000/mixin/client/ServerEntryMixin.java
 package com.partymann2000.mixin.client;
 
 import com.partymann2000.PterodactylApiHelper;
-import com.partymann2000.config.ConfigManager; // <-- WICHTIG: Import hinzufügen
+import com.partymann2000.config.ConfigManager;
 import com.partymann2000.interfaces.IApiStatusUpdater;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
@@ -23,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 @Mixin(MultiplayerServerListWidget.ServerEntry.class)
-public abstract class ServerEntryMixin implements IApiStatusUpdater {
+public abstract class ServerEntryMixin extends MultiplayerServerListWidget.Entry implements IApiStatusUpdater {
 
     @Shadow @Final private MultiplayerScreen screen;
     @Shadow @Final private ServerInfo server;
@@ -38,11 +39,8 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(MultiplayerServerListWidget list, MultiplayerScreen screen, ServerInfo server, CallbackInfo ci) {
-        // ### HIER IST DIE ÄNDERUNG ###
-        // Wir holen den Wert aus der Konfiguration, anstatt ihn fest einzuprogrammieren.
         String configuredNode = ConfigManager.CONFIG.NODE_ENDPOINT;
 
-        // Wir machen den Check robuster: Entferne "http://" oder "https://", falls der User es eingibt.
         if (configuredNode != null && !configuredNode.isEmpty()) {
             String cleanedNode = configuredNode.replace("https://", "").replace("http://", "");
             this.isXenorityServer = this.server.address.startsWith(cleanedNode);
@@ -73,7 +71,7 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void onRender(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
+    private void onRender(DrawContext context, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
         if (!this.isXenorityServer) {
             this.startButton.visible = false;
             this.restartButton.visible = false;
@@ -92,11 +90,11 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
         } else {
             ServerInfo.Status status = this.server.getStatus();
 
-            if (status == ServerInfo.Status.PINGING) {
+            if (status == ServerInfo.Status.PINGING || status == ServerInfo.Status.INITIAL) {
                 this.startButton.active = false;
                 this.restartButton.active = false;
                 this.stopButton.active = false;
-            } else if (status == ServerInfo.Status.SUCCESSFUL) {
+            } else if (status == ServerInfo.Status.SUCCESSFUL || status == ServerInfo.Status.INCOMPATIBLE) {
                 this.startButton.active = false;
                 this.restartButton.active = true;
                 this.stopButton.active = true;
@@ -107,20 +105,27 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
             }
         }
 
-        // Positionierungs-Logik bleibt gleich
+        // Layout Logik
+        int entryX = this.getContentX();
+        int entryY = this.getContentY();
+        int entryWidth = this.getContentWidth();
+
         final int spacing = 4;
         final int totalButtonWidth = entryWidth - (spacing * 2);
         final int singleButtonWidth = totalButtonWidth / 3;
-        final int buttonY = y + 35;
-        this.startButton.setX(x);
+        final int buttonY = entryY + 35;
+
+        this.startButton.setX(entryX);
         this.startButton.setY(buttonY);
         this.startButton.setWidth(singleButtonWidth);
         this.startButton.render(context, mouseX, mouseY, tickDelta);
-        this.restartButton.setX(x + singleButtonWidth + spacing);
+
+        this.restartButton.setX(entryX + singleButtonWidth + spacing);
         this.restartButton.setY(buttonY);
         this.restartButton.setWidth(singleButtonWidth);
         this.restartButton.render(context, mouseX, mouseY, tickDelta);
-        int lastButtonX = x + (singleButtonWidth * 2) + (spacing * 2);
+
+        int lastButtonX = entryX + (singleButtonWidth * 2) + (spacing * 2);
         int lastButtonWidth = entryWidth - (singleButtonWidth * 2) - (spacing * 2);
         this.stopButton.setX(lastButtonX);
         this.stopButton.setY(buttonY);
@@ -129,9 +134,11 @@ public abstract class ServerEntryMixin implements IApiStatusUpdater {
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+    private void onMouseClicked(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         if (!this.isXenorityServer) return;
-        if (this.startButton.mouseClicked(mouseX, mouseY, button) || this.restartButton.mouseClicked(mouseX, mouseY, button) || this.stopButton.mouseClicked(mouseX, mouseY, button)) {
+
+        if (this.startButton.mouseClicked(click, doubled) || this.restartButton.mouseClicked(click, doubled) || this.stopButton.mouseClicked(click, doubled)) {
+            cir.setReturnValue(true);
             cir.cancel();
         }
     }

@@ -28,9 +28,9 @@ public class ModMenuIntegration implements ModMenuApi {
             ConfigCategory general = builder.getOrCreateCategory(Text.literal("API-Einstellungen"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
-            general.addEntry(entryBuilder.startStrField(Text.literal("Pterodactyl API Entpoint"), ConfigManager.CONFIG.API_ENDPOINT)
+            general.addEntry(entryBuilder.startStrField(Text.literal("Pterodactyl API Endpoint"), ConfigManager.CONFIG.API_ENDPOINT)
                     .setDefaultValue("https://panel.<your-domain>.com/")
-                    .setTooltip(Text.literal("Pterodactyl API Entpoint"))
+                    .setTooltip(Text.literal("Pterodactyl API Endpoint"))
                     .setSaveConsumer(newValue -> ConfigManager.CONFIG.API_ENDPOINT = newValue)
                     .build());
 
